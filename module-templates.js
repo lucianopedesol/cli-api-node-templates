@@ -47,16 +47,6 @@ export default class ${propertyName}Controller {
       async handleDelete(req: Request, res: Response) {
         try {
           const { id } = req.params;
-          const ${varName}DTO = req.body;
-          const ${varName} = await this.service.remove(+id, ${varName}DTO);
-          return res.status(200).json(${varName});
-        } catch (err) {
-          return handleHttpError(err, res);
-        }
-      }
-      async handleDelete(req: Request, res: Response) {
-        try {
-          const { id } = req.params;
           await this.service.unregister(+id);
           return res.sendStatus(200);
         } catch (err) {
@@ -143,7 +133,7 @@ export default class ${propertyName}Service {
     ]);
 
     const pages = Math.ceil(totalOf${propertyName}s / elementsPerPage);
-    logger.info('Total of ${varName}List:' + totalOf${propertyName}s + ', total of pages:' + pages);
+    logger.info('Total of ${varName}List: ' + totalOf${propertyName}s + ', total of pages: ' + pages);
 
     return {
       currentPage: page,

@@ -47,16 +47,6 @@ export default class CarrinhoCompraController {
       async handleDelete(req: Request, res: Response) {
         try {
           const { id } = req.params;
-          const carrinhoCompraDTO = req.body;
-          const carrinhoCompra = await this.service.remove(+id, carrinhoCompraDTO);
-          return res.status(200).json(carrinhoCompra);
-        } catch (err) {
-          return handleHttpError(err, res);
-        }
-      }
-      async handleDelete(req: Request, res: Response) {
-        try {
-          const { id } = req.params;
           await this.service.unregister(+id);
           return res.sendStatus(200);
         } catch (err) {
