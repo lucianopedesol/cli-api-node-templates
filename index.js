@@ -28,7 +28,7 @@ function convertVarToCamelCase(input) {
 
 program
     .command('complete-feature <name>')
-    .description('Generate a module api files')
+    .description('Generate a complete feature api files [controller, factory, service, repository, entity]')
     .action(async (name) => {
         try {
             const propertyName = convertToCamelCase(name)
@@ -74,43 +74,11 @@ program
             console.error('Error generating file:', error);
         }
     });
+ 
 
 program
     .command('module <name>')
-    .description('Generate a module api files')
-    .action(async (name) => {
-        try {
-            const propertyName = convertToCamelCase(name)
-            const varName = convertVarToCamelCase(name)
-
-            const controller = controllerContent(propertyName, varName);
-            const factory = factoryContent(propertyName, varName);
-            const service = serviceContent(propertyName, varName);
-
-            const modulePath = join(process.cwd(), 'module/', name)
-
-            if (!fs.existsSync(modulePath))
-                await fs.mkdirSync(modulePath, { recursive: true }, cb => { });
- 
-            if (!fs.existsSync(join(modulePath, `${varName}.controller.ts`)))
-                await fs.writeFileSync(join(modulePath, `${varName}.controller.ts`), controller, err => { });
-
-            if (!fs.existsSync(join(modulePath, `${varName}.factory.ts`)))
-                await fs.writeFileSync(join(modulePath, `${varName}.factory.ts`), factory, err => { });
-
-            if (!fs.existsSync(join(modulePath, `${varName}.service.ts`)))
-                await fs.writeFileSync(join(modulePath, `${varName}.service.ts`), service, err => { });
- 
-            console.log(`Module '${name}' generated successfully.`);
-        } catch (error) {
-            console.error('Error generating file:', error);
-        }
-    });
-
-
-program
-    .command('module <name>')
-    .description('Generate a module api files')
+    .description('Generate a module api files [controller, factory, service]')
     .action(async (name) => {
         try {
             const propertyName = convertToCamelCase(name)
@@ -143,7 +111,7 @@ program
 
 program
 .command('entity <name>')
-.description('Generate a module api files')
+.description('Generate a entity files [repository]')
 .action(async (name) => {
     try {
         const propertyName = convertToCamelCase(name)
@@ -168,7 +136,7 @@ program
 
 program
     .command('repository <name>')
-    .description('Generate a module api files')
+    .description('Generate a repository file [entity]')
     .action(async (name) => {
         try {
             const propertyName = convertToCamelCase(name)
