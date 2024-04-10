@@ -27,7 +27,7 @@ function convertVarToCamelCase(input) {
 
 
 program
-    .command('services <name>')
+    .command('complete-feature <name>')
     .description('Generate a module api files')
     .action(async (name) => {
         try {
@@ -41,24 +41,153 @@ program
             const entity = entityContent(propertyName, varName);
 
             const modulePath = join(process.cwd(), 'module/', name)
-            const repositoryPath = join(process.cwd(), 'repositories/', name) 
-            const entityPath = join(process.cwd(), 'entities/') 
+            const repositoryPath = join(process.cwd(), 'repositories/', name)
+            const entityPath = join(process.cwd(), 'entities/')
 
-            await fs.mkdirSync(join(modulePath), { recursive: true }, cb => { })
-            await fs.mkdirSync(join(repositoryPath), { recursive: true }, cb => { })
-            await fs.mkdirSync(join(entityPath), { recursive: true }, cb => { })
+            if (!fs.existsSync(modulePath))
+                await fs.mkdirSync(modulePath, { recursive: true }, cb => { });
 
-            await fs.writeFileSync(join(modulePath, `${varName}.controller.ts`), controller, err => { });
-            await fs.writeFileSync(join(modulePath, `${varName}.factory.ts`), factory, err => { });
-            await fs.writeFileSync(join(modulePath, `${varName}.service.ts`), service, err => { });
-            await fs.writeFileSync(join(repositoryPath, `index.ts`), repository, err => { });
-            await fs.writeFileSync(join(entityPath, `${varName}.ts`), entity, err => { });
+            if (!fs.existsSync(repositoryPath))
+                await fs.mkdirSync(repositoryPath, { recursive: true }, cb => { });
 
-            console.log(`File '${varName}.ts' generated successfully.`);
+            if (!fs.existsSync(entityPath))
+                await fs.mkdirSync(entityPath, { recursive: true }, cb => { });
+
+            if (!fs.existsSync(join(modulePath, `${varName}.controller.ts`)))
+                await fs.writeFileSync(join(modulePath, `${varName}.controller.ts`), controller, err => { });
+
+            if (!fs.existsSync(join(modulePath, `${varName}.factory.ts`)))
+                await fs.writeFileSync(join(modulePath, `${varName}.factory.ts`), factory, err => { });
+
+            if (!fs.existsSync(join(modulePath, `${varName}.service.ts`)))
+                await fs.writeFileSync(join(modulePath, `${varName}.service.ts`), service, err => { });
+
+            if (!fs.existsSync(join(repositoryPath, `index.ts`)))
+                await fs.writeFileSync(join(repositoryPath, `index.ts`), repository, err => { });
+
+            if (!fs.existsSync(join(entityPath, `${varName}.ts`)))
+                await fs.writeFileSync(join(entityPath, `${varName}.ts`), entity, err => { });
+
+
+            console.log(`Feature '${name}' generated successfully.`);
         } catch (error) {
             console.error('Error generating file:', error);
         }
     });
 
+program
+    .command('module <name>')
+    .description('Generate a module api files')
+    .action(async (name) => {
+        try {
+            const propertyName = convertToCamelCase(name)
+            const varName = convertVarToCamelCase(name)
+
+            const controller = controllerContent(propertyName, varName);
+            const factory = factoryContent(propertyName, varName);
+            const service = serviceContent(propertyName, varName);
+
+            const modulePath = join(process.cwd(), 'module/', name)
+
+            if (!fs.existsSync(modulePath))
+                await fs.mkdirSync(modulePath, { recursive: true }, cb => { });
+ 
+            if (!fs.existsSync(join(modulePath, `${varName}.controller.ts`)))
+                await fs.writeFileSync(join(modulePath, `${varName}.controller.ts`), controller, err => { });
+
+            if (!fs.existsSync(join(modulePath, `${varName}.factory.ts`)))
+                await fs.writeFileSync(join(modulePath, `${varName}.factory.ts`), factory, err => { });
+
+            if (!fs.existsSync(join(modulePath, `${varName}.service.ts`)))
+                await fs.writeFileSync(join(modulePath, `${varName}.service.ts`), service, err => { });
+ 
+            console.log(`Module '${name}' generated successfully.`);
+        } catch (error) {
+            console.error('Error generating file:', error);
+        }
+    });
+
+
+program
+    .command('module <name>')
+    .description('Generate a module api files')
+    .action(async (name) => {
+        try {
+            const propertyName = convertToCamelCase(name)
+            const varName = convertVarToCamelCase(name)
+
+            const controller = controllerContent(propertyName, varName);
+            const factory = factoryContent(propertyName, varName);
+            const service = serviceContent(propertyName, varName);
+
+            const modulePath = join(process.cwd(), 'module/', name)
+
+            if (!fs.existsSync(modulePath))
+                await fs.mkdirSync(modulePath, { recursive: true }, cb => { });
+ 
+            if (!fs.existsSync(join(modulePath, `${varName}.controller.ts`)))
+                await fs.writeFileSync(join(modulePath, `${varName}.controller.ts`), controller, err => { });
+
+            if (!fs.existsSync(join(modulePath, `${varName}.factory.ts`)))
+                await fs.writeFileSync(join(modulePath, `${varName}.factory.ts`), factory, err => { });
+
+            if (!fs.existsSync(join(modulePath, `${varName}.service.ts`)))
+                await fs.writeFileSync(join(modulePath, `${varName}.service.ts`), service, err => { });
+ 
+            console.log(`Module '${name}' generated successfully.`);
+        } catch (error) {
+            console.error('Error generating file:', error);
+        }
+    });
+
+
+program
+.command('entity <name>')
+.description('Generate a module api files')
+.action(async (name) => {
+    try {
+        const propertyName = convertToCamelCase(name)
+        const varName = convertVarToCamelCase(name) 
+        const entity = entityContent(propertyName, varName);
+ 
+        const entityPath = join(process.cwd(), 'entities/')
+        
+        if (!fs.existsSync(entityPath))
+            await fs.mkdirSync(entityPath, { recursive: true }, cb => { });
+ 
+        if (!fs.existsSync(join(entityPath, `${varName}.ts`)))
+            await fs.writeFileSync(join(entityPath, `${varName}.ts`), entity, err => { });
+
+
+        console.log(`Entity '${name}' generated successfully.`);
+    } catch (error) {
+        console.error('Error generating file:', error);
+    }
+});
+
+
+program
+    .command('repository <name>')
+    .description('Generate a module api files')
+    .action(async (name) => {
+        try {
+            const propertyName = convertToCamelCase(name)
+            const varName = convertVarToCamelCase(name)
+ 
+            const repository = repositoryContent(propertyName, varName);
+
+            const repositoryPath = join(process.cwd(), 'repositories/', name)
+ 
+            if (!fs.existsSync(repositoryPath))
+                await fs.mkdirSync(repositoryPath, { recursive: true }, cb => { });
+ 
+            if (!fs.existsSync(join(repositoryPath, `index.ts`)))
+                await fs.writeFileSync(join(repositoryPath, `index.ts`), repository, err => { });
+ 
+            console.log(`Repository '${name}' generated successfully.`);
+        } catch (error) {
+            console.error('Error generating file:', error);
+        }
+    });
 
 program.parse(process.argv);
