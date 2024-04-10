@@ -1,9 +1,11 @@
 const controllerContent = (propertyName, varName) => `
-import { Request, Response } from 'express';\n
-import { handleHttpError } from './utils'; \n
+import { Request, Response } from 'express';
+import { handleHttpError } from "@api/errors"; 
+import ${propertyName}Service from "./${varName}.service";
+import { ${propertyName} } from "@entities/${varName}";
 
-export default class ${propertyName}Controller {\n
-    constructor(private readonly service: ${propertyName}Service) {}\n\n
+export default class ${propertyName}Controller {
+    constructor(private readonly service: ${propertyName}Service) {}
 
     async handleCreate(req: Request, res: Response) {
         try {
@@ -69,6 +71,7 @@ import { Request, Response } from "express";
 import ${propertyName}Repository from "@repositories/${varName}";
 import ${propertyName}Controller from "./${varName}.controller";
 import ${propertyName}Service from "./${varName}.service";
+import { ${propertyName} } from "@entities/${varName}";
 
 export const ${varName}Factory = () => {
   const repository = new ${propertyName}Repository();
@@ -111,6 +114,7 @@ import ServerError from "@api/errors/server.error";
 import logger from "@utils/logger";
 import { ${propertyName} } from "@entities/${varName}";
 import { I${propertyName}Repository } from "@repositories/${varName}";
+import { ${propertyName} } from "@entities/${varName}";
 
 export default class ${propertyName}Service {
   constructor(
@@ -177,5 +181,67 @@ export default class ${propertyName}Service {
 
 `;
 
+const repositoryContent = (propertyName, varName) => `
+import { ${propertyName} } from "@entities/${varName}";
+import { prisma } from "@database/sql";
+import { IRepository } from "@repositories/repository.interface";
+import { Prisma } from "@prisma/client";
 
-module.exports = { factoryContent, controllerContent, serviceContent }
+export interface I${propertyName}Repository extends IRepository<${propertyName}> {
+}
+
+export default class ${propertyName}Repository implements I${propertyName}Repository {
+  async create(${varName}: ${propertyName}): Promise<${propertyName}> {
+    const dataContent: Prisma.${propertyName}CreateArgs = {
+      data: {
+        ...${varName}
+      },
+    };
+
+    return await prisma.${varName}.create(dataContent);
+  }
+  async findAll(): Promise<${propertyName}[]> {
+    return await prisma.${varName}.findMany({ orderBy: { title: "asc" } });
+  }
+  async findById(id: number): Promise<${propertyName}> {
+    const ${varName} = await prisma.${varName}.findUnique({
+      where: { id },
+      include: { group: { select: { title: true } } },
+    });
+    return ${varName};
+  }
+  
+  async update(id: number, { title }: ${propertyName}): Promise<${propertyName}> {
+    const dataContent: Prisma.${propertyName}UpdateArgs = {
+      where: { id },
+      data: { title, updated_at: new Date() },
+    };
+    return await prisma.${varName}.update(dataContent);
+  }
+  async remove(id: number): Promise<void> {
+    await prisma.${varName}.delete({ where: { id } });
+  }
+}
+
+`;
+
+const entityContent = (propertyName, varName) => `
+export class ${propertyName} {
+  id?: number;
+  title?: string; 
+
+  constructor(${varName}: ${propertyName}) {
+    const { id, ...content } = ${varName};
+    Object.assign(this, content);
+  }
+}
+`;
+
+
+module.exports = {
+  factoryContent,
+  controllerContent,
+  serviceContent,
+  repositoryContent,
+  entityContent
+}

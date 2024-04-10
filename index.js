@@ -7,7 +7,7 @@ const chalk = require('chalk');
 const figlet = require('figlet');
 
 const package = require('./package.json');
-const { factoryContent, controllerContent, serviceContent } = require('./module-templates');
+const { factoryContent, controllerContent, serviceContent, repositoryContent, entityContent } = require('./module-templates');
 
 program.version(package.version);
 
@@ -27,7 +27,7 @@ function convertVarToCamelCase(input) {
 
 
 program
-    .command('g m <name>')
+    .command('services <name>')
     .description('Generate a module api files')
     .action(async (name) => {
         try {
@@ -37,13 +37,22 @@ program
             const controller = controllerContent(propertyName, varName);
             const factory = factoryContent(propertyName, varName);
             const service = serviceContent(propertyName, varName);
+            const repository = repositoryContent(propertyName, varName);
+            const entity = entityContent(propertyName, varName);
 
-            const path = join(process.cwd(), name)
-            fs.mkdir(join(path), { recursive: true }, cb => { })
+            const modulePath = join(process.cwd(), 'module/', name)
+            const repositoryPath = join(process.cwd(), 'repositories/', name) 
+            const entityPath = join(process.cwd(), 'entities/') 
 
-            await fs.writeFile(join(path, `${varName}.controller.ts`), controller, err => { });
-            await fs.writeFile(join(path, `${varName}.factory.ts`), factory, err => { });
-            await fs.writeFile(join(path, `${varName}.service.ts`), service, err => { });
+            await fs.mkdirSync(join(modulePath), { recursive: true }, cb => { })
+            await fs.mkdirSync(join(repositoryPath), { recursive: true }, cb => { })
+            await fs.mkdirSync(join(entityPath), { recursive: true }, cb => { })
+
+            await fs.writeFileSync(join(modulePath, `${varName}.controller.ts`), controller, err => { });
+            await fs.writeFileSync(join(modulePath, `${varName}.factory.ts`), factory, err => { });
+            await fs.writeFileSync(join(modulePath, `${varName}.service.ts`), service, err => { });
+            await fs.writeFileSync(join(repositoryPath, `index.ts`), repository, err => { });
+            await fs.writeFileSync(join(entityPath, `${varName}.ts`), entity, err => { });
 
             console.log(`File '${varName}.ts' generated successfully.`);
         } catch (error) {
