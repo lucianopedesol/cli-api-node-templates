@@ -10,10 +10,5 @@
     "chalk": "2.4.2",
     "commander": "2.19.0",
     "figlet": "1.2.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/lucianopedesol/cli-api-node-templates.git"
-  },
-  "readme": "https://github.com/lucianopedesol/cli-api-node-templates/blob/main/README.md"
+  }
 }
